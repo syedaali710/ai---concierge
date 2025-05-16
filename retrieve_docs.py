@@ -14,7 +14,7 @@ class Question(BaseModel):
 @app.post("/ask")
 async def ask_question(q: Question):
     result = retrieve_docs(q.query)
-    # Format your answer to return JSON response
+    # Formating answer to return JSON response
     answers = [{"content": doc["content"], "source": doc["source"]} for doc in result["docs"]]
     return {"answers": answers}
 

@@ -26,7 +26,7 @@ db = Chroma.from_documents(documents, embedding_model, persist_directory="chroma
 def score_response(query, top_k=1):
     results = db.similarity_search_with_score(query, k=top_k)
     for doc, score in results:
-        print("\n🧠 Best Match:")
+        print("\n Best Match:")
         print("Content:", doc.page_content)
         print("Source:", doc.metadata.get("source", "unknown"))
         print("Score (lower is better):", score)

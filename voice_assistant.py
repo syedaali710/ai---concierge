@@ -14,7 +14,7 @@ def listen():
     """Listen to user's voice and convert to text."""
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
-        print("🎤 Listening...")
+        print("Listening...")
         audio = recognizer.listen(source)
 
     try:
@@ -22,11 +22,11 @@ def listen():
         print(f"👂 You said: {query}")
         return query
     except sr.UnknownValueError:
-        print("😕 Could not understand audio")
+        print("Could not understand audio")
         speak("Sorry, I did not understand that.")
         return None
     except sr.RequestError:
-        print("🔌 Could not request results")
+        print("Could not request results")
         speak("Network error.")
         return None
 
