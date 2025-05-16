@@ -1,0 +1,41 @@
+# LangChain cache directories
+.lc_cache/
+lc_logs/
+langchain.log
+
+# LangChain Hub if used locally
+langchainhub/
+
+# LangChain server output (if applicable)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# General Python project ignores
+.env
+*.env
+*.sqlite
+*.db
+*.log
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# VS Code settings (if using VS Code)
+.vscode/
+
+# Mac-specific
+.DS_Store
+# Chroma or FAISS vector stores
+chroma_db/
+faiss_index/
+index.faiss
+index.pkl
+
+*.json
+*.yaml
+*.yml
+*.pkl
+venc/
+venv/
