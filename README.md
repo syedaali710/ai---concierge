@@ -1,119 +1,139 @@
-Instructions for Setting Up the Environment
-Use these procedures to launch the project on macOS:
+# AI-Concierge
 
+A local vector search API with voice capabilities that provides accurate answers from your document database.
 
-> If Homebrew isn't already installed, install it.
-> For macOS, Homebrew is a package manager that facilitates dependency installation. From the Homebrew website, execute the following command:
-bash Copy Edit /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-> When prompted, enter your macOS password and follow the on-screen directions.
->Set up Python 3.12
->Install Python 3.12 using Homebrew:
-> brew install python 3.12
-> run Python 3 --version
->Establish a Virtual Environment for Python
->Run the following in the project folder:
->Python3 -m venv venv source venv/bin/activate
->Your project dependencies are isolated as a result.
->Install the necessary Python packages.
-To install LangGraph, uvicorn, and FastAPI, use pip.
-> Install the necessary Python packages.
-Installing FastAPI, uvicorn, LangGraph, ChromaDB, and other components is done with pip:
+## Features
 
-> Installing Fastapi with pip chromadb httpbasic uvicorn langgraph
-(Only install extra packages, such as pyttsx3 or speech_recognition, if necessary.)
+-  **Vector Search**: Local document retrieval using ChromaDB
+-  **Authentication**: Basic HTTP authentication
+-  **Voice Interface**: Speech input and output capabilities
+-  **FastAPI Backend**: High-performance Python web framework
+-  **Intelligent Ranking**: Self-reflection algorithm for result relevance
+-  **LangGraph Integration**: Efficient processing without expensive API calls
 
-> Create a Vector Store and LangGraph.
->download documents for vector search. To index your data locally without using API keys, see to the LangGraph documentation.
->Launch the FastAPI application.
->Launch your server using:
->The URL for the API will be http://127.0.0.1:8000.
-LOCAL HOST KEY:
- username = "datababe"
- password = "drsamah710"
+## Getting Started
 
-Self-Grading Rubric Explanation & Threshold Justification
+### Prerequisites
 
------FUNCTIONALITY
+- macOS
+- Terminal access
 
-Core API Functions is u put in place a FastAPI server that takes in request, verifies the user, gets vector results, and provides structured responses.
+### Environment Setup
 
-Search Logic is Valid as this API uses a local database (ChromaDB) to perform true vector search, and it chooses the top three non-repeating responses based on score. This demonstrates appropriate sorting and filtering logic.
+1. **Install Homebrew** (if not already installed)
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+   When prompted, enter your macOS password and follow on-screen instructions.
 
-Speech input and output have been added. It understands simple commands, responds via TTS, and operates locally. 
+2. **Install Python 3.12**
+   ```bash
+   brew install python@3.12
+   python3 --version  # Verify installation
+   ```
 
->>> A working API that provides accurate answers, is protected by simple auth, and is enhanced by voice? That satisfies and surpasses the functional bar.
+3. **Create a Virtual Environment**
+   Navigate to your project folder and run:
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
 
------- TOOLS 
+4. **Install Required Dependencies**
+   ```bash
+   pip install fastapi uvicorn langgraph chromadb httpbasic
+   ```
+   Optional packages if using voice features:
+   ```bash
+   pip install pyttsx3 speech_recognition
+   ```
 
-I choosed LangGraph and ChromaDB tools because they were more eeconomical than the moree expensive OpenAI APIs. 
+5. **Set Up Vector Store**
+   Download and prepare your documents for vector search according to the LangGraph documentation.
 
->>> If we use free tools, we can scale any system keeping th cost in control.
+6. **Start the API Server**
+   ```bash
+   uvicorn main:app --reload
+   ```
+   The API will be available at http://127.0.0.1:8000
 
------ Error Handling
-If auth fails, you will get 401. 
+## Authentication
 
-I tried to handle edge cases ,like  deduplication logic in place, vector search returns less than 3 documents.
+The API uses HTTP Basic Authentication with the following credentials:
+- Username: `****`
+- Password: `****`
 
-When instructed to stop, the voice assistant can say "Goodbye" and fails gracefully.
+## API Usage
 
->>>I tried to take real life problems
+### Testing with cURL
 
- ------ Self-reflection Algorithm Details (Including Decay Mechanism)
+```bash
+curl -X POST "http://127.0.0.1:8000/ask" \
+  -u datababe:drsamah710 \
+  -H "Content-Type: application/json" \
+  -d '{"query": "What is vector search?"}'
+```
 
+### Testing with HTTPie
 
-Self-reflection mainly refers to how the system chooses the top 3 responses to return from vector search results. I didnt implement it tradionally rather i did it by deduplication by content & source that prevents repeat answers by checking (content, source) tuples.
+```bash
+http --auth datababe:drsamah710 POST http://127.0.0.1:8000/ask query="What is vector search?"
+```
 
-by using score-based sorting (decay-like effect) I rank documents by descending score. This acts like a decay , lower-scoring results get filtered unless they're in the top.
+## Response Format
 
-LI set the limit to 3 answers to ensure clarity, relevance, and avoid overloading the user.
+Successful queries return structured responses with source citations:
 
------ API Testing Guide with cURL/HTTPie Examples
+```json
+{
+  "answer": "Vector search is a technique to find similar items based on embeddings.",
+  "source": "ML Basics Paper",
+  "metadata": {
+    "title": "Vector Search",
+    "source": "ML Basics Paper"
+  }
+}
+```
 
-You can test the /ask endpoint using either curl or httpie
+## Self-Reflection Algorithm
 
->>> curl -X POST "http://127.0.0.1:8000/ask" \
--u datababe:drsamah710 \
--H "Content-Type: application/json" \
--d '{"query": "What is vector search?"}'
+The system employs a sophisticated approach to ensure high-quality responses:
 
->>> http --auth datababe:drsamah710 POST http://127.0.0.1:8000/ask query="What is vector search?"
+1. **Content Deduplication**: Prevents repeat answers by checking (content, source) tuples
+2. **Score-Based Ranking**: Results are sorted by relevance score in descending order
+3. **Top-K Retrieval**: Returns the top 3 non-repetitive results to balance completeness with conciseness
 
----- --- Registration and Login Flow
-I implemented a basic authentication system using HTTPBasic from FastAPI. This doesn't involve sign-up forms or databases but follows this flow
+This methodology mimics a decay mechanism where lower-scoring results are filtered out unless they're highly relevant.
 
-- Login Credentials: Stored in code (datababe / drsamah710).
+## Voice Assistant Features
 
-- When user hits /ask, they're prompted for HTTP Basic Auth.
+The voice interface supports:
 
-- If wrong credentials are entered:
+- Speech input for queries
+- Text-to-speech output for responses
+- Command recognition (e.g., "stop" or "exit" to end the session)
 
-*Returns 401 Unauthorized*
+## Error Handling
 
-- Includes a header to trigger re-auth in the browser or client.
+The API includes robust error handling:
 
-This can be swapped later for OAuth2 or JWT, but this method works for private/local testing and prototyping.
+- Authentication failures return a 401 Unauthorized status
+- Out-of-scope questions return an empty results list or low-confidence fallback
+- Graceful error handling for edge cases (fewer than 3 documents, speech recognition failures)
 
-------Happy-Path Q&A With Citations 
-user asks : "What is vector search?"
- He gets: answer": "Vector search is a technique to find similar items based on embeddings.
-      "source": "ML Basics Paper",
-      "metadata": 
-        "title": "Vector Search",
-        "source": "ML Basics Paper"
+## Registration and Login Flow
 
-so Each result includes "source" and "metadata" so that the answer can be traced back to its origin.
+1. User makes a request to `/ask` endpoint
+2. System prompts for HTTP Basic Authentication
+3. If credentials match (datababe/drsamah710), the request proceeds
+4. If authentication fails, a 401 Unauthorized response is returned with a header to trigger re-authentication
 
+## Out-of-Scope Questions
 
----- Out-of-Scope Question Handling
-If a question doesn't match anything in the vector store then the system returns an empty results list or low-confidence fallback if nothing matches. No hallucination occurs because our system doesn't generate, it only retrieves.
+When a query doesn't match documents in the vector database, the system:
+- Returns an empty results list or low-confidence message
+- Avoids hallucination by only retrieving existing information, not generating new content
 
+## Contributors
 
-
-------Feedback Command Demonstration
-In your voice assistant saying "stop" or "exit" triggers.  It provides a end to the session with a spoken message, not just a silent exit. If u successfully run it then you will know. 
-
-
-
-
-
-
+Dr Samah
